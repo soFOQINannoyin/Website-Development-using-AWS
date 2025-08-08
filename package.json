@@ -1,0 +1,14 @@
+{
+  "name": "serverless-backend",
+  "version": "1.0.0",
+  "description": "Simple serverless backend with DynamoDB",
+  "main": "handler.js",
+  "scripts": {
+    "start": "node handler.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0",
+    "uuid": "^9.0.0"
+  }
+}
