@@ -1,0 +1,50 @@
+service: serverless-simple-app
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: dev
+  environment:
+    TABLE_NAME: ${self:service}-${opt:stage, self:provider.stage}-items
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:PutItem"
+            - "dynamodb:Scan"
+            - "dynamodb:GetItem"
+            - "dynamodb:Query"
+          Resource: 
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_NAME}"
+
+functions:
+  getItems:
+    handler: handler.getItems
+    events:
+      - httpApi:
+          method: GET
+          path: /items
+
+  createItem:
+    handler: handler.createItem
+    events:
+      - httpApi:
+          method: POST
+          path: /items
+
+resources:
+  Resources:
+    ItemsDynamoTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
